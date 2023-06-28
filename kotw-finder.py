@@ -2,13 +2,12 @@ import re
 import requests
 
 # Set owned expansions
-owned_expansions = ['Dominion', 'Intrigue', 'Seaside', 'Alchemy', 'Prosperity', 'Dark Ages', 'Guilds', 'Cornucopia']
-
+owned_expansions = ['Base', 'Dominion', 'Intrigue', 'Seaside', 'Alchemy', 'Prosperity', 'Dark Ages', 'Guilds', 'Cornucopia']
 
 session = requests.Session()
-kotw_title_pattern = re.compile(r"KotW 1?[0-9]\/[1-3]?[0-9]: ")
+kotw_title_pattern = re.compile(r"KotW 1?[0-9].+: ")
 kotw_expansion_pattern = re.compile(r"\[(.+)\]")
-
+imgur_pattern = re.compile(r"(https?:\/\/imgur.com\/a\/[0-9a-zA-Z]+)")
 
 def search_kotw(after = None):
     base_url = f'https://www.reddit.com/r/dominion/search.json'
@@ -29,6 +28,12 @@ def get_expansions(title):
         return expansion_match.group(1).split(', ')
 
 
+def get_imgurlink(selftext):
+    imgur_match = imgur_pattern.search(selftext)
+    if imgur_match != None:
+        return imgur_match.group(1)
+
+
 def print_compatible_kotw(json):
     for child in json['data']['children']:
         title = child['data']['title']
@@ -40,7 +45,12 @@ def print_compatible_kotw(json):
                     compabible = False
                     break
             if(compabible):
-                print("[+] Found compatible KotW:\n" + title + "\n")
+                print("[+] Found compatible KotW:\n" + title)
+                description = child['data']['selftext']
+                image_link = get_imgurlink(description)
+                if (image_link != None):
+                    print("Image link: " + image_link)
+                print("")
             
   
 after = None
