@@ -39,12 +39,12 @@ def print_compatible_kotw(json):
         title = child['data']['title']
         if(match_kotw(title)):
             expansions = get_expansions(title)
-            compabible = True
+            compatible = True
             for expansion in expansions:
                 if expansion not in owned_expansions:
-                    compabible = False
+                    compatible = False
                     break
-            if(compabible):
+            if(compatible):
                 print("[+] Found compatible KotW:\n" + title)
                 description = child['data']['selftext']
                 image_link = get_imgurlink(description)
@@ -53,10 +53,11 @@ def print_compatible_kotw(json):
                 print("")
             
   
-after = None
-while True:
-    search_result = search_kotw(after)
-    print_compatible_kotw(search_result)
-    after = search_result['data']['after']
-    if (after == None ):
-        break
+if __name__ == '__main__':
+    after = None
+    while True:
+        search_result = search_kotw(after)
+        print_compatible_kotw(search_result)
+        after = search_result['data']['after']
+        if (after == None ):
+            break
